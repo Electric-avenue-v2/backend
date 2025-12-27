@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  firstName String   @map("first_name")
+  lastName  String   @map("last_name")
+  confirmed Boolean  @default(false)
+  photo     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  products    Product[]
+  credentials UserCredentials?
+
+  @@map("users")
+}
+
+model UserCredentials {
+  id                         String    @id @default(uuid())
+  userId                     String    @unique @map("user_id")
+  hashedPassword             String?   @map("hashed_password")
+  hashedRt                   String?   @map("hashed_rt")
+  verificationToken          String?   @unique @map("verification_token")
+  verificationTokenExpiresAt DateTime? @map("verification_token_expires_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_credentials")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  sellerId    String   @map("seller_id")
+  title       String
+  description String
+  categoryId  String   @map("category_id")
+  price       Decimal  @db.Decimal(10, 2)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  seller        User           @relation(fields: [sellerId], references: [id])
+  category      Category       @relation(fields: [categoryId], references: [id])
+  productImages ProductImage[]
+
+  @@map("products")
+}
+
+model ProductImage {
+  id        String @id @default(cuid())
+  productId String @map("product_id")
+  url       String
+  publicId  String @unique @map("public_id")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_images")
+}
+
+model Category {
+  id       String   @id @default(cuid())
+  name     String
+  parentId String?  @map("parent_id")
+  icon     String?
+  isGroup  Boolean? @default(false) @map("is_group")
+
+  Product Product[]
+
+  @@index([parentId])
+  @@map("categories")
+}
