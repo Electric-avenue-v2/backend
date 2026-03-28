@@ -1,23 +1,26 @@
-FROM node:20-alpine AS builder
+ARG NODE_VERSION=20
+ARG PNPM_VERSION=10.30.1
+
+FROM node:${NODE_VERSION}-alpine AS builder
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@10.0.0 --activate
+ARG PNPM_VERSION
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 COPY package.json pnpm-lock.yaml ./
+
 RUN pnpm install --frozen-lockfile
 
 COPY . .
 
 RUN pnpm run build
 
-FROM node:20-alpine
+FROM node:${NODE_VERSION}-alpine
 
 WORKDIR /app
 
 ENV NODE_ENV=production
-
-RUN corepack enable && corepack prepare pnpm@10.0.0 --activate
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
