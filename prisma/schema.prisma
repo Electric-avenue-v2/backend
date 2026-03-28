@@ -13,14 +13,26 @@ model User {
   firstName String   @map("first_name")
   lastName  String   @map("last_name")
   confirmed Boolean  @default(false)
-  photo     String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   products    Product[]
   credentials UserCredentials?
+  images      UserImage[]
 
   @@map("users")
+}
+
+model UserImage {
+  id       String @id @default(uuid())
+  userId   String @map("user_id")
+  url      String
+  alt      String
+  publicId String @unique @map("public_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_images")
 }
 
 model UserCredentials {
@@ -36,43 +48,133 @@ model UserCredentials {
   @@map("user_credentials")
 }
 
+model Category {
+  id       String  @id @default(cuid())
+  name     String
+  slug     String  @unique
+  icon     String?
+  parentId String? @map("parent_id")
+
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryHierarchy")
+
+  allowedAttributes CategoryAttribute[]
+  products          Product[]
+
+  @@index([parentId])
+  @@map("categories")
+}
+
+model Attribute {
+  id   String        @id @default(cuid())
+  name String
+  slug String
+  type AttributeType
+
+  categories CategoryAttribute[]
+  values     AttributeValue[]
+
+  @@map("attributes")
+}
+
+enum AttributeType {
+  SELECT
+  NUMBER
+  BOOLEAN
+}
+
+model AttributeValue {
+  id          String @id @default(cuid())
+  value       String
+  attributeId String @map("attribute_id")
+
+  productVariants VariantAttributeValue[]
+  products        ProductAttributeValue[]
+
+  attribute Attribute @relation(fields: [attributeId], references: [id])
+
+  @@unique([attributeId, value])
+  @@map("attribute_values")
+}
+
+model CategoryAttribute {
+  categoryId  String
+  attributeId String
+
+  category  Category  @relation(fields: [categoryId], references: [id])
+  attribute Attribute @relation(fields: [attributeId], references: [id])
+
+  @@id([categoryId, attributeId])
+  @@map("category_attributes")
+}
+
 model Product {
   id          String   @id @default(uuid())
   sellerId    String   @map("seller_id")
   title       String
-  description String
+  slug        String
+  description String   @db.Text
   categoryId  String   @map("category_id")
-  price       Decimal  @db.Decimal(10, 2)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  seller        User           @relation(fields: [sellerId], references: [id])
-  category      Category       @relation(fields: [categoryId], references: [id])
+  variants      ProductVariant[]
+  specs         ProductAttributeValue[]
   productImages ProductImage[]
+
+  seller   User     @relation(fields: [sellerId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
   @@map("products")
 }
 
 model ProductImage {
-  id        String @id @default(cuid())
-  productId String @map("product_id")
-  url       String
-  publicId  String @unique @map("public_id")
+  id               String  @id @default(cuid())
+  url              String
+  publicId         String  @unique @map("public_id")
+  productVariantId String? @map("product_variant_id")
+  productId        String? @map("product_id")
 
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variant ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  product Product?        @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@map("product_images")
 }
 
-model Category {
-  id       String   @id @default(cuid())
-  name     String
-  parentId String?  @map("parent_id")
-  icon     String?
-  isGroup  Boolean? @default(false) @map("is_group")
+model ProductVariant {
+  id        String  @id @default(cuid())
+  productId String  @map("product_id")
+  sku       String  @unique
+  price     Decimal @db.Decimal(10, 2)
+  stock     Int     @default(0)
 
-  Product Product[]
+  productImages ProductImage[]
+  attributes    VariantAttributeValue[]
 
-  @@index([parentId])
-  @@map("categories")
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@map("product_variants")
+}
+
+model VariantAttributeValue {
+  variantId        String @map("variant_id")
+  attributeValueId String @map("attribute_value_id")
+
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  value   AttributeValue @relation(fields: [attributeValueId], references: [id], onDelete: Restrict)
+
+  @@id([variantId, attributeValueId])
+  @@map("variant_attribute_values")
+}
+
+model ProductAttributeValue {
+  productId        String @map("product_id")
+  attributeValueId String @map("attribute_value_id")
+
+  product Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  value   AttributeValue @relation(fields: [attributeValueId], references: [id], onDelete: Restrict)
+
+  @@id([productId, attributeValueId])
+  @@map("product_attribute_values")
 }

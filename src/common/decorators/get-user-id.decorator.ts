@@ -1,15 +1,18 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { Request } from 'express';
-import { JwtPayload } from '~/jwt-token/types/jwt-token.types';
+import type { ExecutionContext } from '@nestjs/common';
+import { createParamDecorator } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import type { JwtPayload } from '~/auth/types/jwt-token.types';
 
-interface RequestWithUser extends Request {
-  user: JwtPayload;
+interface GqlContext {
+	req: {
+		user: JwtPayload;
+	};
 }
-
 export const GetCurrentUserId = createParamDecorator(
-  (_: undefined, context: ExecutionContext): string => {
-    const request = context.switchToHttp().getRequest<RequestWithUser>();
-    const user = request.user;
-    return user.sub;
-  },
+	(_: undefined, context: ExecutionContext): string => {
+		const ctx = GqlExecutionContext.create(context);
+		const gqlReq = ctx.getContext<GqlContext>().req;
+
+		return gqlReq.user.sub;
+	}
 );

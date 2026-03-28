@@ -1,2 +1,2 @@
-export * from './auth.dto';
-export * from './auth-response.dto'
+export * from './auth.input';
+export * from './otp.input';

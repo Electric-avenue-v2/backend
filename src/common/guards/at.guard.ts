@@ -1,24 +1,32 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 import { Observable } from 'rxjs';
 
 @Injectable()
 export class AtGuard extends AuthGuard('jwt') {
-  constructor(private readonly reflector: Reflector) {
-    super();
-  }
+	constructor(private readonly reflector: Reflector) {
+		super();
+	}
 
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-    const isPublic = this.reflector.getAllAndOverride<boolean>('isPublic', [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+	getRequest(context: ExecutionContext): Request {
+		const ctx = GqlExecutionContext.create(context);
+		const gqlContext = ctx.getContext<{ req: Request }>();
+		return gqlContext.req;
+	}
 
-    if (isPublic) {
-      return true;
-    }
+	canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+		const isPublic = this.reflector.getAllAndOverride<boolean>('isPublic', [
+			context.getHandler(),
+			context.getClass()
+		]);
 
-    return super.canActivate(context);
-  }
+		if (isPublic) {
+			return true;
+		}
+
+		return super.canActivate(context);
+	}
 }

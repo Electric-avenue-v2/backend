@@ -1,16 +1,22 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { MailgunModule } from '~/mailgun/mailgun.module';
-import { HashingModule } from '~/hashing/hashing.module';
-import { JwtTokenModule } from '~/jwt-token/jwt-token.module';
+import { JwtModule } from '@nestjs/jwt';
+import { CookiesService } from '~/auth/cookies.service';
+import { JwtTokenService } from '~/auth/jwt-token.service';
 import { AtStrategy, RtStrategy } from '~/auth/strategies';
-import { CookiesModule } from '~/cookies/cookies.module';
+import { HashingModule } from '~/hashing/hashing.module';
+import { MailgunModule } from '~/mailgun/mailgun.module';
+import { AuthService } from './auth.service';
+import { AuthResolver } from '~/auth/auth.resolver';
 
 @Module({
-  imports: [MailgunModule, HashingModule, JwtTokenModule, CookiesModule],
-  controllers: [AuthController],
-  providers: [AuthService, AtStrategy, RtStrategy],
+	imports: [JwtModule.register({}), MailgunModule, HashingModule],
+	providers: [
+		AuthService,
+		AuthResolver,
+		CookiesService,
+		JwtTokenService,
+		AtStrategy,
+		RtStrategy
+	]
 })
-export class AuthModule {
-}
+export class AuthModule {}

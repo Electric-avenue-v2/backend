@@ -1,0 +1,223 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Tokens {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type MessageResponse {
+  message: String!
+}
+
+type UserIdResponse {
+  userId: String!
+}
+
+type Category {
+  id: ID!
+  name: String!
+  parentId: String
+  icon: String
+}
+
+type ProductCategory {
+  id: ID!
+  name: String!
+  slug: String!
+  icon: String
+}
+
+type ProductSeller {
+  id: ID!
+  firstName: String!
+  lastName: String!
+}
+
+type AttributeInfo {
+  id: ID!
+  name: String!
+  slug: String!
+}
+
+type AttributeValue {
+  id: ID!
+  value: String!
+  attribute: AttributeInfo!
+}
+
+type ProductAttributeValue {
+  value: AttributeValue!
+}
+
+type ProductImage {
+  id: ID!
+  url: String!
+  publicId: String!
+}
+
+type ProductVariant {
+  id: ID!
+  sku: String!
+  price: Float!
+  stock: Int!
+  productImages: [ProductImage!]
+  attributes: [ProductAttributeValue!]
+}
+
+type ProductListItem implements ProductBase {
+  id: ID!
+  title: String!
+  slug: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  category: ProductCategory!
+
+  """Min price of variants"""
+  minPrice: Float
+
+  """Main picture"""
+  thumbnail: String
+
+  """Quantity of goods"""
+  variantsCount: Int!
+}
+
+interface ProductBase {
+  id: ID!
+  title: String!
+  slug: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  category: ProductCategory!
+
+  """Min price of variants"""
+  minPrice: Float
+
+  """Main picture"""
+  thumbnail: String
+  variantsCount: Int!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type ProductDetails implements ProductBase {
+  id: ID!
+  title: String!
+  slug: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  category: ProductCategory!
+
+  """Min price of variants"""
+  minPrice: Float
+
+  """Main picture"""
+  thumbnail: String
+  variantsCount: Int!
+  description: String!
+  seller: ProductSeller!
+  specs: [ProductAttributeValue!]!
+  variants: [ProductVariant!]!
+  productImages: [ProductImage!]!
+}
+
+type ProductPagination {
+  items: [ProductListItem!]!
+  total: Int!
+}
+
+type UserModel {
+  id: ID!
+  email: String!
+  firstName: String!
+  lastName: String!
+  confirmed: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Query {
+  hello: String!
+  categories: [Category!]!
+  products(query: GetProductsInput!): ProductPagination!
+  product(id: String!): ProductDetails!
+  me: UserModel
+}
+
+input GetProductsInput {
+  search: String
+  categoryId: String
+  minPrice: Float
+  maxPrice: Float
+  attributes: [ProductAttributeFilter!]
+  offset: Int! = 0
+  limit: Int! = 20
+}
+
+input ProductAttributeFilter {
+  slug: String!
+  values: [String!]!
+}
+
+type Mutation {
+  createProduct(createProductInput: CreateProductInput!): ProductDetails!
+  deleteProduct(id: String!): ProductDetails!
+  register(input: RegisterInput!): UserIdResponse!
+  login(input: LoginInput!): Tokens!
+  logout: MessageResponse!
+  refresh: Tokens!
+  verifyOtp(input: VerifyOtpInput!): MessageResponse!
+  resendOtp(input: ResendOtpInput!): MessageResponse!
+}
+
+input CreateProductInput {
+  title: String!
+  description: String!
+  categoryId: String!
+  images: [ProductImageInput!]
+  specs: [ProductAttributeInput!]!
+  variants: [CreateVariantInput!]!
+}
+
+input ProductImageInput {
+  url: String!
+  publicId: String!
+}
+
+input ProductAttributeInput {
+  attributeValueId: String!
+}
+
+input CreateVariantInput {
+  sku: String!
+  price: Float!
+  stock: Int!
+  attributes: [ProductAttributeInput!]!
+  images: [ProductImageInput!]!
+}
+
+input RegisterInput {
+  email: String!
+  password: String!
+  firstName: String!
+  lastName: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input VerifyOtpInput {
+  email: String!
+  otpCode: String!
+}
+
+input ResendOtpInput {
+  email: String!
+}

@@ -1,6 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
-
 export class MessageResponseDto {
-  @ApiProperty({ example: 'Success' })
-  message: string;
+	message: string;
+}
+
+export class SuccessResponseDto {
+	success: boolean;
 }

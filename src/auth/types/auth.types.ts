@@ -1,8 +1,8 @@
-import { Request } from 'express';
+import type { Request } from 'express';
 
 export interface IRequestWithCookies extends Request {
-  cookies: {
-    refreshToken?: string;
-    accessToken?: string;
-  } & Record<string, string | undefined>;
+	cookies: {
+		refreshToken?: string;
+		accessToken?: string;
+	} & Record<string, string | undefined>;
 }
