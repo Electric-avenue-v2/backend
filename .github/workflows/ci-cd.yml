@@ -14,11 +14,12 @@ jobs:
 
       - name: Enable Corepack
         run: corepack enable
-          - name: Set up Node.js
-            uses: actions/setup-node@v3
-            with:
-                node-version: 20
-                cache: 'pnpm'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
