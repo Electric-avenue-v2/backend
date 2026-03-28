@@ -60,4 +60,5 @@ jobs:
           script: |
             cd ~/electric-avenue
             docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest
+            docker compose run --rm backend npx prisma migrate deploy
             docker-compose up -d --remove-orphans
