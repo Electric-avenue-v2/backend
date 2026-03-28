@@ -9,16 +9,19 @@ jobs:
   server:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout backend code
+        uses: actions/checkout@v3
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: 'pnpm'
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 10.30.1
+      - name: Enable corepack & setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.30.1 --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -38,14 +41,17 @@ jobs:
       - name: Build and push Docker image (multi-arch)
         uses: docker/build-push-action@v5
         with:
+          context: .
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/backend:latest
-          platforms: linux/arm64
+          platforms: linux/amd64,linux/arm64
+          build-args: |
+            NODE_VERSION=20
+            PNPM_VERSION=10.30.1
 
   deploy:
-    needs: [server]
+    needs: server
     runs-on: ubuntu-latest
-
     steps:
       - name: Deploy to server via SSH
         uses: appleboy/ssh-action@v0.1.6
