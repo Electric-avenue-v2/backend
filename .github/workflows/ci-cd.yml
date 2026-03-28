@@ -12,16 +12,13 @@ jobs:
       - name: Checkout backend code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - name: Enable corepack & setup pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@10.30.1 --activate
+      - name: Enable Corepack
+        run: corepack enable
+          - name: Set up Node.js
+            uses: actions/setup-node@v3
+            with:
+                node-version: 20
+                cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
