@@ -4,14 +4,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
-
-
-
-
-
-
-
 const bootstrap = async (): Promise<void> => {
+	console.log(process.env.NODE_ENV);
 	const app = await NestFactory.create(AppModule);
 	app.use(cookieParser());
 	app.useGlobalPipes(

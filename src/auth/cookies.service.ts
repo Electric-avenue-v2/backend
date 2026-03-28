@@ -8,8 +8,11 @@ export class CookiesService {
 	private getCookieOptions(): CookieOptions {
 		return {
 			httpOnly: true,
-			sameSite: 'strict' as const,
-			secure: process.env.NODE_ENV === 'prod'
+			sameSite: 'lax' as const,
+			secure: process.env.NODE_ENV === 'prod',
+			...(process.env.NODE_ENV === 'prod' && {
+				domain: '.electric-avenue.online'
+			})
 		};
 	}
 
