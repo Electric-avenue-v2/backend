@@ -9,8 +9,10 @@ ARG PNPM_VERSION
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 COPY package.json pnpm-lock.yaml ./
+COPY prisma ./prisma/
 
 RUN pnpm install --frozen-lockfile
+RUN pnpm dlx prisma generate
 
 COPY . .
 
