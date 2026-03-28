@@ -12,7 +12,7 @@ COPY package.json pnpm-lock.yaml ./
 COPY prisma ./prisma/
 
 RUN pnpm install --frozen-lockfile
-RUN pnpm dlx prisma generate
+RUN pnpm exec prisma generate
 
 COPY . .
 
