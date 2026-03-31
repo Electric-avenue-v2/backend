@@ -1,11 +1,9 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
 const bootstrap = async (): Promise<void> => {
-	console.log(process.env.NODE_ENV);
 	const app = await NestFactory.create(AppModule);
 	app.use(cookieParser());
 	app.useGlobalPipes(
@@ -17,18 +15,9 @@ const bootstrap = async (): Promise<void> => {
 
 	app.enableCors({
 		origin: [process.env.CLIENT_URL, process.env.CLIENT_URL2].filter(Boolean),
-		methods: 'GET,POST,PUT,DELETE',
+		methods: 'GET,POST,PUT,DELETE,OPTIONS',
 		credentials: true
 	});
-
-	const config = new DocumentBuilder()
-		.setTitle('Electric Avenue API')
-		.setDescription('This is an API for interacting with application.')
-		.setVersion('1.0.0')
-		.addBearerAuth()
-		.build();
-	const document = SwaggerModule.createDocument(app, config);
-	SwaggerModule.setup('/api/docs', app, document);
 
 	await app.listen(process.env.PORT ?? 8000);
 };

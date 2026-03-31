@@ -2,11 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Tokens {
-  accessToken: String!
-  refreshToken: String!
-}
-
 type MessageResponse {
   message: String!
 }
@@ -15,11 +10,17 @@ type UserIdResponse {
   userId: String!
 }
 
+type Tokens {
+  accessToken: String!
+  refreshToken: String!
+}
+
 type Category {
   id: ID!
   name: String!
-  parentId: String
+  slug: String!
   icon: String
+  parentId: String
 }
 
 type ProductCategory {
@@ -139,10 +140,15 @@ type UserModel {
   confirmed: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
+  role: UserRole!
+}
+
+enum UserRole {
+  ADMIN
+  USER
 }
 
 type Query {
-  hello: String!
   categories: [Category!]!
   products(query: GetProductsInput!): ProductPagination!
   product(id: String!): ProductDetails!
@@ -165,6 +171,7 @@ input ProductAttributeFilter {
 }
 
 type Mutation {
+  invalidateCategoriesCache: Boolean!
   createProduct(createProductInput: CreateProductInput!): ProductDetails!
   deleteProduct(id: String!): ProductDetails!
   register(input: RegisterInput!): UserIdResponse!

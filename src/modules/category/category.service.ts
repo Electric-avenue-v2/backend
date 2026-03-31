@@ -1,0 +1,39 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject, Injectable } from '@nestjs/common';
+import { Cache } from 'cache-manager';
+import { PrismaService } from '~/infrastructure/prisma/prisma.service';
+import { Category } from './models/category.model';
+
+const CATEGORIES_CACHE_KEY = 'categories:tree';
+
+@Injectable()
+export class CategoryService {
+	constructor(
+		private readonly prisma: PrismaService,
+		@Inject(CACHE_MANAGER) private readonly cache: Cache
+	) {}
+
+	async getAll(): Promise<Category[]> {
+		const cached = await this.cache.get<Category[]>(CATEGORIES_CACHE_KEY);
+		if (cached) return cached;
+
+		const all = await this.prisma.category.findMany();
+
+		await this.cache.set(CATEGORIES_CACHE_KEY, all);
+		return all;
+	}
+
+	async invalidateCache(): Promise<boolean> {
+		await this.cache.del(CATEGORIES_CACHE_KEY);
+		return true;
+	}
+
+	// private buildTree(categories: Category[], parentId: string | null = null): Category[] {
+	// 	return categories
+	// 		.filter(cat => cat.parentId === parentId)
+	// 		.map(cat => ({
+	// 			...cat,
+	// 			children: this.buildTree(categories, cat.id)
+	// 		}));
+	// }
+}

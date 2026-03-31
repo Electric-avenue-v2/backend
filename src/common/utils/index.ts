@@ -1,0 +1,1 @@
+export { generateOtp } from './utils';

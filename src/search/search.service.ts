@@ -2,7 +2,7 @@ import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Client } from '@opensearch-project/opensearch';
 import { Index_Response } from '@opensearch-project/opensearch/api';
 import { Attribute, AttributeValue, Product, ProductImage, ProductVariant } from '@prisma/client';
-import { GetProductsInput } from '~/product/dto/get-products.input';
+import { GetProductsInput } from '~/modules/product/inputs/get-products.input';
 import { ProductSearchBody, TypedApiResponse } from '~/search/types/opensearch.types';
 import { QueryDsl } from '~/search/types/search.types';
 import { OPENSEARCH_CLIENT } from './search.config';

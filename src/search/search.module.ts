@@ -2,7 +2,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Client } from '@opensearch-project/opensearch';
-import { OPENSEARCH_CLIENT } from '~/search/search.config';
+import { OPENSEARCH_CLIENT } from './search.config';
 import { SearchProcessor } from './search.processor';
 import { SearchService } from './search.service';
 

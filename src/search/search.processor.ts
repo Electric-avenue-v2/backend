@@ -1,8 +1,8 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
-import { SuccessResponseDto } from '~/common/dto/response.dto';
-import { PrismaService } from '~/prisma/prisma.service';
+import { SuccessResponse } from '~/common/models';
+import { PrismaService } from '~/infrastructure/prisma/prisma.service';
 import { SearchService } from './search.service';
 
 @Processor('search-queue')
@@ -16,7 +16,7 @@ export class SearchProcessor extends WorkerHost {
 		super();
 	}
 
-	async process(job: Job<{ productId: string }>): Promise<SuccessResponseDto | void> {
+	async process(job: Job<{ productId: string }>): Promise<SuccessResponse | void> {
 		const { productId } = job.data;
 
 		switch (job.name) {
@@ -33,7 +33,7 @@ export class SearchProcessor extends WorkerHost {
 		}
 	}
 
-	private async handleIndexProduct(productId: string): Promise<SuccessResponseDto> {
+	private async handleIndexProduct(productId: string): Promise<SuccessResponse> {
 		this.logger.log(`Start of product indexing: ${productId}`);
 
 		const product = await this.prisma.product.findUnique({
@@ -64,7 +64,7 @@ export class SearchProcessor extends WorkerHost {
 		return { success: true };
 	}
 
-	private async handleDeleteProduct(productId: string): Promise<SuccessResponseDto> {
+	private async handleDeleteProduct(productId: string): Promise<SuccessResponse> {
 		this.logger.log(`Removing product from index: ${productId}`);
 
 		const res = await this.searchService.removeProduct(productId);
