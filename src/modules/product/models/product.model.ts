@@ -90,14 +90,7 @@ export class ProductVariant {
 	attributes?: ProductAttributeValue[];
 }
 
-@InterfaceType({
-	resolveType(value: ProductDetails | ProductListItem) {
-		if ('description' in value) {
-			return ProductDetails;
-		}
-		return ProductListItem;
-	}
-})
+@InterfaceType()
 export class ProductBase {
 	@Field(() => ID)
 	id: string;
@@ -125,12 +118,6 @@ export class ProductBase {
 }
 
 @ObjectType({ implements: () => [ProductBase] })
-export class ProductListItem extends ProductBase {
-	@Field(() => Int, { description: 'Quantity of goods' })
-	variantsCount: number;
-}
-
-@ObjectType({ implements: () => [ProductBase] })
 export class ProductDetails extends ProductBase {
 	@Field()
 	description: string;
@@ -146,13 +133,4 @@ export class ProductDetails extends ProductBase {
 
 	@Field(() => [ProductImage])
 	productImages: ProductImage[];
-}
-
-@ObjectType()
-export class ProductPagination {
-	@Field(() => [ProductListItem])
-	items: ProductListItem[];
-
-	@Field(() => Int)
-	total: number;
 }

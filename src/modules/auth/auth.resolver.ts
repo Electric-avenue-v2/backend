@@ -39,10 +39,7 @@ export class AuthResolver {
 	}
 
 	@Mutation(() => MessageResponse)
-	async logout(
-		@GetCurrentUserId() userId: string,
-		@Context() context: GqlContext
-	): Promise<MessageResponse> {
+	async logout(@GetCurrentUserId() userId: string, @Context() context: GqlContext): Promise<MessageResponse> {
 		const result = await this.authService.logout(userId);
 		this.cookiesService.removeTokensFromResponse(context.res);
 		return result;

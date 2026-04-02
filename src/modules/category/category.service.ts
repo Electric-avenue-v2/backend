@@ -27,13 +27,4 @@ export class CategoryService {
 		await this.cache.del(CATEGORIES_CACHE_KEY);
 		return true;
 	}
-
-	// private buildTree(categories: Category[], parentId: string | null = null): Category[] {
-	// 	return categories
-	// 		.filter(cat => cat.parentId === parentId)
-	// 		.map(cat => ({
-	// 			...cat,
-	// 			children: this.buildTree(categories, cat.id)
-	// 		}));
-	// }
 }

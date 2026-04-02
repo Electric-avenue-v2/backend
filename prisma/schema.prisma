@@ -128,7 +128,7 @@ model Product {
   specs         ProductAttributeValue[]
   productImages ProductImage[]
 
-  seller   User     @relation(fields: [sellerId], references: [id])
+  seller   User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
   @@map("products")

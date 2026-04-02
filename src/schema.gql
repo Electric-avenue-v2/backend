@@ -67,7 +67,7 @@ type ProductVariant {
   attributes: [ProductAttributeValue!]
 }
 
-type ProductListItem implements ProductBase {
+type ProductDetails implements ProductBase {
   id: ID!
   title: String!
   slug: String!
@@ -80,9 +80,11 @@ type ProductListItem implements ProductBase {
 
   """Main picture"""
   thumbnail: String
-
-  """Quantity of goods"""
-  variantsCount: Int!
+  description: String!
+  seller: ProductSeller!
+  specs: [ProductAttributeValue!]!
+  variants: [ProductVariant!]!
+  productImages: [ProductImage!]!
 }
 
 interface ProductBase {
@@ -98,39 +100,12 @@ interface ProductBase {
 
   """Main picture"""
   thumbnail: String
-  variantsCount: Int!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
-
-type ProductDetails implements ProductBase {
-  id: ID!
-  title: String!
-  slug: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  category: ProductCategory!
-
-  """Min price of variants"""
-  minPrice: Float
-
-  """Main picture"""
-  thumbnail: String
-  variantsCount: Int!
-  description: String!
-  seller: ProductSeller!
-  specs: [ProductAttributeValue!]!
-  variants: [ProductVariant!]!
-  productImages: [ProductImage!]!
-}
-
-type ProductPagination {
-  items: [ProductListItem!]!
-  total: Int!
-}
 
 type UserModel {
   id: ID!
@@ -148,26 +123,107 @@ enum UserRole {
   USER
 }
 
+type AttributeValueAggregation {
+  value: String!
+  count: Int!
+}
+
+type AttributeAggregation {
+  slug: String!
+  name: String!
+  values: [AttributeValueAggregation!]!
+}
+
+type PriceRangeAggregation {
+  min: Float!
+  max: Float!
+}
+
+type SearchAggregations {
+  attributes: [AttributeAggregation!]!
+  priceRange: PriceRangeAggregation
+}
+
+type ProductListItem {
+  id: String!
+  title: String!
+  slug: String!
+  minPrice: Float!
+  maxPrice: Float!
+  inStock: Boolean!
+  thumbnailUrl: String
+  categorySlug: String!
+  categoryName: String!
+}
+
+type PaginationMeta {
+  currentPage: Int!
+  totalPages: Int!
+  totalItems: Int!
+  itemsPerPage: Int!
+  hasNextPage: Boolean!
+  hasPrevPage: Boolean!
+}
+
+type SearchResult {
+  items: [ProductListItem!]!
+  pagination: PaginationMeta!
+  aggregations: SearchAggregations!
+}
+
+type SearchSuggestion {
+  title: String!
+  slug: String!
+  categorySlug: String!
+  categoryName: String!
+}
+
 type Query {
   categories: [Category!]!
-  products(query: GetProductsInput!): ProductPagination!
   product(id: String!): ProductDetails!
   me: UserModel
+  searchSuggestions(input: SearchSuggestionsInput!): [SearchSuggestion!]!
+  searchProducts(input: SearchProductsInput!): SearchResult!
+  categoryProducts(input: CategoryProductsInput!): SearchResult!
 }
 
-input GetProductsInput {
-  search: String
-  categoryId: String
+input SearchSuggestionsInput {
+  query: String!
+}
+
+input SearchProductsInput {
+  query: String
+  page: Int! = 1
+  limit: Int! = 24
+  sort: ProductSort! = NEWEST
   minPrice: Float
   maxPrice: Float
-  attributes: [ProductAttributeFilter!]
-  offset: Int! = 0
-  limit: Int! = 20
+  inStock: Boolean
+  attributes: [AttributeFilterInput!]
 }
 
-input ProductAttributeFilter {
+enum ProductSort {
+  NEWEST
+  PRICE_ASC
+  PRICE_DESC
+  POPULAR
+}
+
+input AttributeFilterInput {
   slug: String!
   values: [String!]!
+}
+
+input CategoryProductsInput {
+  query: String
+  page: Int! = 1
+  limit: Int! = 24
+  sort: ProductSort! = NEWEST
+  minPrice: Float
+  maxPrice: Float
+  inStock: Boolean
+  attributes: [AttributeFilterInput!]
+  categorySlug: String!
 }
 
 type Mutation {

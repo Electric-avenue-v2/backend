@@ -23,9 +23,7 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
 			}
 			case 'P2025': {
 				const message =
-					typeof exception.meta?.cause === 'string'
-						? exception.meta.cause
-						: 'Record not found in database';
+					typeof exception.meta?.cause === 'string' ? exception.meta.cause : 'Record not found in database';
 
 				throw new GraphQLError(message, {
 					extensions: { code: 'NOT_FOUND', status: HttpStatus.NOT_FOUND }

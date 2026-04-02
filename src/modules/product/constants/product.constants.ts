@@ -1,5 +1,7 @@
 import type { Prisma } from '@prisma/client';
 
+export const PRODUCT_INDEX_NAME = 'products';
+
 export const PRODUCT_FULL_INCLUDE = {
 	variants: {
 		include: {
@@ -17,20 +19,4 @@ export const PRODUCT_FULL_INCLUDE = {
 	category: true,
 	seller: true,
 	productImages: true
-} as const satisfies Prisma.ProductInclude;
-
-export const PRODUCT_LIST_INCLUDE = {
-	variants: {
-		select: {
-			id: true,
-			sku: true,
-			price: true,
-			stock: true,
-			productImages: {
-				take: 1
-			}
-		}
-	},
-	productImages: { take: 1 },
-	category: true
 } as const satisfies Prisma.ProductInclude;

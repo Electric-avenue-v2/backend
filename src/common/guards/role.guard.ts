@@ -3,10 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { UserRole } from '@prisma/client';
 import { Request } from 'express';
-
-interface GqlContext {
-	req: Request;
-}
+import { type GraphqlContext } from '~/common/types';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -23,7 +20,7 @@ export class RoleGuard implements CanActivate {
 		}
 
 		const ctx = GqlExecutionContext.create(context);
-		const gqlContext = ctx.getContext<GqlContext>();
+		const gqlContext = ctx.getContext<GraphqlContext>();
 
 		const user = gqlContext.req.user;
 

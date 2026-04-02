@@ -8,11 +8,9 @@ interface GqlContext {
 		user: JwtPayload;
 	};
 }
-export const GetCurrentUserId = createParamDecorator(
-	(_: undefined, context: ExecutionContext): string => {
-		const ctx = GqlExecutionContext.create(context);
-		const gqlReq = ctx.getContext<GqlContext>().req;
+export const GetCurrentUserId = createParamDecorator((_: undefined, context: ExecutionContext): string => {
+	const ctx = GqlExecutionContext.create(context);
+	const gqlReq = ctx.getContext<GqlContext>().req;
 
-		return gqlReq.user.sub;
-	}
-);
+	return gqlReq.user.sub;
+});

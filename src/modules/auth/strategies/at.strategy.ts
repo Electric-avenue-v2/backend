@@ -31,10 +31,7 @@ export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
 		throw new UnauthorizedException('Access token not found');
 	}
 
-	validate(
-		req: IRequestWithCookies,
-		payload: JwtPayload
-	): JwtPayload & { accessToken: string | null } {
+	validate(req: IRequestWithCookies, payload: JwtPayload): JwtPayload & { accessToken: string | null } {
 		const accessToken = AtStrategy.extractJwt(req);
 
 		return {

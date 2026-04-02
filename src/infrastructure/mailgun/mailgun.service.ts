@@ -18,13 +18,7 @@ export class MailgunService {
 		});
 	}
 
-	async sendTemplateEmail({
-		to,
-		subject,
-		template,
-		variables = {},
-		from
-	}: SendTemplateEmailDto): Promise<void> {
+	async sendTemplateEmail({ to, subject, template, variables = {}, from }: SendTemplateEmailDto): Promise<void> {
 		const domain = this.configService.getOrThrow<string>('MAILGUN_DOMAIN');
 		const defaultFrom = this.configService.getOrThrow<string>('MAILGUN_FROM');
 

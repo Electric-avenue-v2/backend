@@ -4,7 +4,7 @@ import type {
 	Product as PrismaProduct,
 	ProductVariant as PrismaVariant
 } from '@prisma/client';
-import type { PRODUCT_FULL_INCLUDE, PRODUCT_LIST_INCLUDE } from '../constants/product.constants';
+import type { PRODUCT_FULL_INCLUDE } from '../constants/product.constants';
 
 export type ProductPayload = PrismaProduct & {
 	variants?: (PrismaVariant & { productImages: PrismaImage[] })[];
@@ -13,4 +13,3 @@ export type ProductPayload = PrismaProduct & {
 };
 
 export type ProductFull = Prisma.ProductGetPayload<{ include: typeof PRODUCT_FULL_INCLUDE }>;
-export type ProductList = Prisma.ProductGetPayload<{ include: typeof PRODUCT_LIST_INCLUDE }>;

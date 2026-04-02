@@ -1,9 +1,4 @@
-import {
-	BadRequestException,
-	ForbiddenException,
-	Injectable,
-	NotFoundException
-} from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { MessageResponse } from '~/common/models';
 import { generateOtp } from '~/common/utils';
 import { HashingService } from '~/infrastructure/hashing/hashing.service';
@@ -75,10 +70,7 @@ export class AuthService {
 			throw new BadRequestException('No credentials found');
 		}
 
-		if (
-			credentials.verificationToken !== dto.otpCode ||
-			credentials.verificationTokenExpiresAt < new Date()
-		)
+		if (credentials.verificationToken !== dto.otpCode || credentials.verificationTokenExpiresAt < new Date())
 			throw new BadRequestException('Invalid or expired OTP');
 
 		await this.prisma.user.update({
@@ -142,10 +134,7 @@ export class AuthService {
 			throw new ForbiddenException('Wrong email or password');
 		}
 
-		const passwordMatches = await this.hashingService.compare(
-			loginDto.password,
-			user.credentials.hashedPassword
-		);
+		const passwordMatches = await this.hashingService.compare(loginDto.password, user.credentials.hashedPassword);
 		if (!passwordMatches) {
 			throw new ForbiddenException('Wrong email or password');
 		}

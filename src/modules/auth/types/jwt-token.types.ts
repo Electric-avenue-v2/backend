@@ -3,7 +3,7 @@ import { UserRole } from '@prisma/client';
 export interface JwtPayload {
 	email: string;
 	sub: string;
-	role: UserRole
+	role: UserRole;
 }
 
 export interface JwtPayloadWithRt extends JwtPayload {
