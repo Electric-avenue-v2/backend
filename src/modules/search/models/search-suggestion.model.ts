@@ -1,7 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class SearchSuggestion {
+	@Field(() => ID)
+	id: string;
+
 	@Field()
 	title: string;
 

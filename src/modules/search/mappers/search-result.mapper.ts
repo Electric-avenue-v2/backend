@@ -9,7 +9,7 @@ import type {
 } from '../models/attribute-aggregation.model';
 import type { ProductListItem, SearchResult } from '../models/search-result.model';
 import type { EsAggregations, EsAttributeBucket } from '../types/search-mapper.types';
-import { isEsAggregations, isEsPerFacetAggregation } from '../utils/search.utils';
+import { isEsAggregations } from '../utils/search.utils';
 
 export const listFields = [
 	'id',
@@ -80,28 +80,6 @@ export class SearchResultMapper {
 			} else {
 				result.set(bucket.key, this.bucketToAggregation(bucket));
 			}
-		}
-
-		for (const [key, value] of Object.entries(aggs)) {
-			if (!key.startsWith('facet_')) continue;
-			if (!isEsPerFacetAggregation(value)) continue;
-
-			const slug = key.replace('facet_', '');
-
-			const specValues = value.specs.by_slug.values.buckets;
-			const variantValues = value.variant_attrs.attrs.by_slug.values.buckets;
-
-			const merged = this.mergeValueCounts(
-				specValues.map(v => ({ value: v.key, count: v.doc_count })),
-				variantValues
-			);
-
-			const existing = result.get(slug);
-			result.set(slug, {
-				slug,
-				name: existing?.name ?? slug,
-				values: merged
-			});
 		}
 
 		return Array.from(result.values());

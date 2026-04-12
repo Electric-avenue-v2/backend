@@ -104,9 +104,14 @@ export class ProductIndexService implements OnModuleInit {
 	}
 
 	async deleteProduct(id: string): Promise<void> {
-		await this.elasticsearchService.delete({
-			index: PRODUCT_INDEX_NAME,
-			id
-		});
+		try {
+			await this.elasticsearchService.delete({
+				index: PRODUCT_INDEX_NAME,
+				id,
+			});
+		} catch (err) {
+			if (err instanceof Error && err.message.includes('not_found')) return;
+			throw err;
+		}
 	}
 }

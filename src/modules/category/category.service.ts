@@ -27,4 +27,10 @@ export class CategoryService {
 		await this.cache.del(CATEGORIES_CACHE_KEY);
 		return true;
 	}
+
+	async getBySlug(slug: string): Promise<Category | null> {
+		return this.prisma.category.findUnique({
+			where: { slug }
+		});
+	}
 }

@@ -172,6 +172,7 @@ type SearchResult {
 }
 
 type SearchSuggestion {
+  id: ID!
   title: String!
   slug: String!
   categorySlug: String!
@@ -180,6 +181,7 @@ type SearchSuggestion {
 
 type Query {
   categories: [Category!]!
+  categoryBySlug(slug: String!): Category
   product(id: String!): ProductDetails!
   me: UserModel
   searchSuggestions(input: SearchSuggestionsInput!): [SearchSuggestion!]!

@@ -14,6 +14,7 @@ import { ProductModule } from '~/modules/product/product.module';
 import { UserModule } from '~/modules/user/user.module';
 import { PrismaClientExceptionFilter } from './common/filters/prisma-client-exception.filter';
 import { SearchModule } from './modules/search/search.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 
 @Module({
 	imports: [
@@ -28,7 +29,8 @@ import { SearchModule } from './modules/search/search.module';
 		MailgunModule,
 		HashingModule,
 		UserModule,
-		SearchModule
+		SearchModule,
+		AnalyticsModule
 	],
 	providers: [
 		{

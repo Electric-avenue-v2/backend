@@ -48,7 +48,7 @@ export class SearchService {
 		const response = await this.elasticsearchService.search<ListSource, Record<string, AggregationsAggregate>>({
 			index: PRODUCT_INDEX_NAME,
 			...this.queryBuilder.forSearch(input),
-			aggs: this.aggsBuilder.build(input),
+			aggs: this.aggsBuilder.build(),
 			_source: [...listFields]
 		});
 
@@ -59,7 +59,7 @@ export class SearchService {
 		const response = await this.elasticsearchService.search<ListSource, Record<string, AggregationsAggregate>>({
 			index: PRODUCT_INDEX_NAME,
 			...this.queryBuilder.forCategory(input),
-			aggs: this.aggsBuilder.build(input),
+			aggs: this.aggsBuilder.build(),
 			_source: [...listFields]
 		});
 
