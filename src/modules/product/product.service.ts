@@ -1,6 +1,6 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import slugify from 'slugify';
-import { PrismaService } from '~/infrastructure/prisma/prisma.service';
+import { PrismaService } from '~/infrastructure/prisma';
 import { PRODUCT_FULL_INCLUDE } from './constants/product.constants';
 import { CreateProductInput } from './inputs/create-product.input';
 import { ProductFull } from './types/product.types';

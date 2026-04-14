@@ -1,9 +1,9 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { MessageResponse } from '~/common/models';
 import { generateOtp } from '~/common/utils';
-import { HashingService } from '~/infrastructure/hashing/hashing.service';
-import { MailgunService } from '~/infrastructure/mailgun/mailgun.service';
-import { PrismaService } from '~/infrastructure/prisma/prisma.service';
+import { HashingService } from '~/infrastructure/hashing';
+import { MailgunService } from '~/infrastructure/mailgun';
+import { PrismaService } from '~/infrastructure/prisma';
 import { LoginInput, RegisterInput } from './inputs/auth.input';
 import { ResendOtpInput, VerifyOtpInput } from './inputs/otp.input';
 import { JwtTokenService } from './jwt-token.service';

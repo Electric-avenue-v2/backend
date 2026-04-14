@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { HashingModule } from '~/infrastructure/hashing/hashing.module';
-import { MailgunModule } from '~/infrastructure/mailgun/mailgun.module';
+import { HashingModule } from '~/infrastructure/hashing';
+import { MailgunModule } from '~/infrastructure/mailgun';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
 import { CookiesService } from './cookies.service';

@@ -1,4 +1,4 @@
-import { PrismaService } from '~/infrastructure/prisma/prisma.service';
+import { PrismaService } from '~/infrastructure/prisma';
 import { DebeziumRecord } from '../types/redis-consumer.types';
 import { getString } from '../utils/redis-consumer.utils';
 

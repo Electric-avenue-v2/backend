@@ -1,21 +1,21 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { PrismaClientExceptionFilter } from '~/common/filters';
 import { AtGuard, RoleGuard } from '~/common/guards';
-import { ElasticSearchModule } from '~/infrastructure/elastic-search/elastic-search.module';
-import { GraphqlConfigModule } from '~/infrastructure/graphql/graphql-config.module';
-import { HashingModule } from '~/infrastructure/hashing/hashing.module';
-import { MailgunModule } from '~/infrastructure/mailgun/mailgun.module';
-import { PrismaModule } from '~/infrastructure/prisma/prisma.module';
-import { RedisConfigModule } from '~/infrastructure/redis/redis-config.module';
-import { AuthModule } from '~/modules/auth/auth.module';
-import { CategoryModule } from '~/modules/category/category.module';
-import { ProductModule } from '~/modules/product/product.module';
-import { UserModule } from '~/modules/user/user.module';
-import { PrismaClientExceptionFilter } from './common/filters/prisma-client-exception.filter';
-import { SearchModule } from './modules/search/search.module';
-import { AnalyticsModule } from './modules/analytics/analytics.module';
-import { FavoriteModule } from './modules/favorite/favorite.module';
+import { ElasticSearchModule } from '~/infrastructure/elastic-search';
+import { GraphqlConfigModule } from '~/infrastructure/graphql';
+import { HashingModule } from '~/infrastructure/hashing';
+import { MailgunModule } from '~/infrastructure/mailgun';
+import { PrismaModule } from '~/infrastructure/prisma';
+import { RedisConfigModule } from '~/infrastructure/redis';
+import { AuthModule } from '~/modules/auth';
+import { CategoryModule } from '~/modules/category';
+import { FavoriteModule } from '~/modules/favorite';
+import { ProductModule } from '~/modules/product';
+import { UserModule } from '~/modules/user';
+import { AnalyticsModule } from './modules/analytics';
+import { SearchModule } from '~/modules/search';
 
 @Module({
 	imports: [

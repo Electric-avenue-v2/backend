@@ -1,16 +1,14 @@
-import type { ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { createParamDecorator } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import type { JwtPayload } from '~/modules/auth/types/jwt-token.types';
+import { GraphqlContext } from '~/infrastructure/graphql';
 
-interface GqlContext {
-	req: {
-		user: JwtPayload;
-	};
-}
 export const GetCurrentUserId = createParamDecorator((_: undefined, context: ExecutionContext): string => {
 	const ctx = GqlExecutionContext.create(context);
-	const gqlReq = ctx.getContext<GqlContext>().req;
+	const gqlReq = ctx.getContext<GraphqlContext>().req;
+	const sub = gqlReq.user?.sub;
 
-	return gqlReq.user.sub;
+	if (!sub) throw new UnauthorizedException('User not authenticated');
+	
+	return sub;
 });

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ElasticSearchModule } from '~/infrastructure/elastic-search/elastic-search.module';
+import { ElasticSearchModule } from '~/infrastructure/elastic-search';
 import { ProductIndexService } from './product-index.service';
 import { ProductResolver } from './product.resolver';
 import { ProductService } from './product.service';

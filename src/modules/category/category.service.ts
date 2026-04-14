@@ -1,7 +1,7 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
-import { PrismaService } from '~/infrastructure/prisma/prisma.service';
+import { PrismaService } from '~/infrastructure/prisma';
 import { Category } from './models/category.model';
 
 const CATEGORIES_CACHE_KEY = 'categories:tree';

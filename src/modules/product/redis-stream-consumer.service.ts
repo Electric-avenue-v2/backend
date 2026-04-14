@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/commo
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 import { isObject } from '~/common/utils/utils';
-import { PrismaService } from '~/infrastructure/prisma/prisma.service';
+import { PrismaService } from '~/infrastructure/prisma';
 import { PRODUCT_FULL_INCLUDE } from './constants/product.constants';
 import { ALL_STREAM_KEYS, STREAM_RESOLVERS } from './constants/redis-consumer.constants';
 import { ProductIndexService } from './product-index.service';

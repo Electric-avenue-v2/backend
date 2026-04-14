@@ -23,6 +23,64 @@ type Category {
   parentId: String
 }
 
+type AttributeValueAggregation {
+  value: String!
+  count: Int!
+}
+
+type AttributeAggregation {
+  slug: String!
+  name: String!
+  values: [AttributeValueAggregation!]!
+}
+
+type PriceRangeAggregation {
+  min: Float!
+  max: Float!
+}
+
+type SearchAggregations {
+  attributes: [AttributeAggregation!]!
+  priceRange: PriceRangeAggregation
+}
+
+type ProductListItem {
+  id: String!
+  title: String!
+  slug: String!
+  sellerId: String!
+  minPrice: Float!
+  maxPrice: Float!
+  inStock: Boolean!
+  thumbnailUrl: String
+  categorySlug: String!
+  categoryName: String!
+  isLiked: Boolean
+}
+
+type PaginationMeta {
+  currentPage: Int!
+  totalPages: Int!
+  totalItems: Int!
+  itemsPerPage: Int!
+  hasNextPage: Boolean!
+  hasPrevPage: Boolean!
+}
+
+type SearchResult {
+  items: [ProductListItem!]!
+  pagination: PaginationMeta!
+  aggregations: SearchAggregations!
+}
+
+type SearchSuggestion {
+  id: ID!
+  title: String!
+  slug: String!
+  categorySlug: String!
+  categoryName: String!
+}
+
 type ProductCategory {
   id: ID!
   name: String!
@@ -121,64 +179,6 @@ type UserModel {
 enum UserRole {
   ADMIN
   USER
-}
-
-type AttributeValueAggregation {
-  value: String!
-  count: Int!
-}
-
-type AttributeAggregation {
-  slug: String!
-  name: String!
-  values: [AttributeValueAggregation!]!
-}
-
-type PriceRangeAggregation {
-  min: Float!
-  max: Float!
-}
-
-type SearchAggregations {
-  attributes: [AttributeAggregation!]!
-  priceRange: PriceRangeAggregation
-}
-
-type ProductListItem {
-  id: String!
-  title: String!
-  slug: String!
-  sellerId: String!
-  minPrice: Float!
-  maxPrice: Float!
-  inStock: Boolean!
-  thumbnailUrl: String
-  categorySlug: String!
-  categoryName: String!
-  isLiked: Boolean
-}
-
-type PaginationMeta {
-  currentPage: Int!
-  totalPages: Int!
-  totalItems: Int!
-  itemsPerPage: Int!
-  hasNextPage: Boolean!
-  hasPrevPage: Boolean!
-}
-
-type SearchResult {
-  items: [ProductListItem!]!
-  pagination: PaginationMeta!
-  aggregations: SearchAggregations!
-}
-
-type SearchSuggestion {
-  id: ID!
-  title: String!
-  slug: String!
-  categorySlug: String!
-  categoryName: String!
 }
 
 type Query {

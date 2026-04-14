@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ElasticSearchModule } from '~/infrastructure/elastic-search/elastic-search.module';
+import { ElasticSearchModule } from '~/infrastructure/elastic-search';
 import { SearchAggregationsBuilder } from './builders/search-aggregations.builder';
 import { SearchFiltersBuilder } from './builders/search-filters.builder';
 import { SearchQueryBuilder } from './builders/search-query.builder';

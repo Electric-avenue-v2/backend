@@ -1,7 +1,7 @@
 import { Args, Context, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { GetCurrentUserId } from '~/common/decorators';
 import { GraphqlContext } from '~/infrastructure/graphql/types/graphql.types';
-import { ProductListItem } from '~/modules/search/models/search-result.model';
+import { ProductListItem } from '~/modules/search';
 import { FavoriteLoader } from './favorite.loader';
 import { FavoriteService } from './favorite.service';
 import { SyncFavoritesInput } from './inputs/favorite.input';

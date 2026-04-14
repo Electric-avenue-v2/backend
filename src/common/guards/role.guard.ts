@@ -2,8 +2,7 @@ import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { UserRole } from '@prisma/client';
-import { Request } from 'express';
-import { type GraphqlContext } from '~/common/types';
+import { GraphqlContext } from '~/infrastructure/graphql';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
