@@ -242,6 +242,7 @@ type Mutation {
   resendOtp(input: ResendOtpInput!): MessageResponse!
   addFavorite(productId: String!): Boolean!
   removeFavorite(productId: String!): Boolean!
+  syncFavorites(input: SyncFavoritesInput!): Boolean!
 }
 
 input CreateProductInput {
@@ -289,4 +290,8 @@ input VerifyOtpInput {
 
 input ResendOtpInput {
   email: String!
+}
+
+input SyncFavoritesInput {
+  productIds: [String!]!
 }

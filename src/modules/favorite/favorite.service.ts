@@ -20,17 +20,17 @@ export class FavoriteService {
 			where: {
 				userId_productId: {
 					userId,
-					productId,
-				},
+					productId
+				}
 			},
 			update: {},
 			create: {
 				userId,
-				productId,
-			},
+				productId
+			}
 		});
 
-		return true
+		return true;
 	}
 
 	async removeFavorite(userId: string, productId: string): Promise<boolean> {
@@ -47,5 +47,17 @@ export class FavoriteService {
 			select: { productId: true }
 		});
 		return favorites.map(f => f.productId);
+	}
+
+	async syncFavorites(userId: string, productIds: string[]): Promise<boolean> {
+		await this.prisma.favorite.createMany({
+			data: productIds.map(productId => ({
+				userId,
+				productId
+			})),
+			skipDuplicates: true
+		});
+
+		return true;
 	}
 }
