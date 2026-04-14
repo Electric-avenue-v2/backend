@@ -148,12 +148,14 @@ type ProductListItem {
   id: String!
   title: String!
   slug: String!
+  sellerId: String!
   minPrice: Float!
   maxPrice: Float!
   inStock: Boolean!
   thumbnailUrl: String
   categorySlug: String!
   categoryName: String!
+  isLiked: Boolean
 }
 
 type PaginationMeta {
@@ -238,6 +240,8 @@ type Mutation {
   refresh: Tokens!
   verifyOtp(input: VerifyOtpInput!): MessageResponse!
   resendOtp(input: ResendOtpInput!): MessageResponse!
+  addFavorite(productId: String!): Boolean!
+  removeFavorite(productId: String!): Boolean!
 }
 
 input CreateProductInput {

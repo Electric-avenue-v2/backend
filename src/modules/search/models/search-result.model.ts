@@ -12,6 +12,9 @@ export class ProductListItem {
 	@Field()
 	slug: string;
 
+	@Field()
+	sellerId: string;
+
 	@Field(() => Number)
 	minPrice: number;
 
@@ -29,6 +32,9 @@ export class ProductListItem {
 
 	@Field()
 	categoryName: string;
+
+	@Field(() => Boolean, { nullable: true })
+	isLiked?: boolean;
 }
 
 @ObjectType()

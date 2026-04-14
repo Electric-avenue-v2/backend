@@ -1,13 +1,8 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { Request, Response } from 'express';
 import { join } from 'path';
-
-interface GraphqlContext {
-	req: Request;
-	res: Response;
-}
+import { GraphqlContext } from './types/graphql.types';
 
 @Module({
 	imports: [

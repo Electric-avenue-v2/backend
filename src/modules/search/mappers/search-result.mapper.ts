@@ -20,7 +20,8 @@ export const listFields = [
 	'inStock',
 	'thumbnailUrl',
 	'categorySlug',
-	'categoryName'
+	'categoryName',
+	'sellerId',
 ] as const;
 
 export type ListSource = Pick<EsProductDocument, (typeof listFields)[number]>;

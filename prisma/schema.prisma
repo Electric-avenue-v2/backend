@@ -20,6 +20,7 @@ model User {
   products    Product[]
   credentials UserCredentials?
   images      UserImage[]
+  favorites   Favorite[]
 
   @@map("users")
 }
@@ -128,8 +129,9 @@ model Product {
   specs         ProductAttributeValue[]
   productImages ProductImage[]
 
-  seller   User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  seller    User       @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  category  Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  favorites Favorite[]
 
   @@map("products")
 }
@@ -183,4 +185,16 @@ model ProductAttributeValue {
 
   @@id([productId, attributeValueId])
   @@map("product_attribute_values")
+}
+
+model Favorite {
+  userId    String   @map("user_id")
+  productId String   @map("product_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([userId, productId])
+  @@map("favorites")
 }

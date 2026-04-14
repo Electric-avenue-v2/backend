@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -19,16 +19,12 @@ export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
 	private static extractJwt(this: void, req: IRequestWithCookies): string | null {
 		const cookieToken = req.cookies?.accessToken;
-		if (cookieToken) {
-			return cookieToken;
-		}
+		if (cookieToken) return cookieToken;
 
 		const bearerToken = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
-		if (bearerToken) {
-			return bearerToken;
-		}
+		if (bearerToken) return bearerToken;
 
-		throw new UnauthorizedException('Access token not found');
+		return null;
 	}
 
 	validate(req: IRequestWithCookies, payload: JwtPayload): JwtPayload & { accessToken: string | null } {
