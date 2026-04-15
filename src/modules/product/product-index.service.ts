@@ -15,12 +15,46 @@ export class ProductIndexService implements OnModuleInit {
 		if (!indexExists) {
 			await this.elasticsearchService.indices.create({
 				index: PRODUCT_INDEX_NAME,
+				settings: {
+					analysis: {
+						filter: {
+							edge_ngram_filter: {
+								type: 'edge_ngram',
+								min_gram: 2,
+								max_gram: 20
+							}
+						},
+						analyzer: {
+							autocomplete_analyzer: {
+								type: 'custom',
+								tokenizer: 'standard',
+								filter: ['lowercase', 'edge_ngram_filter']
+							},
+							standard_lowercase: {
+								type: 'custom',
+								tokenizer: 'standard',
+								filter: ['lowercase']
+							}
+						}
+					}
+				},
 				mappings: {
 					properties: {
 						id: { type: 'keyword' },
-						title: { type: 'text', analyzer: 'standard', fields: { keyword: { type: 'keyword' } } },
+						title: {
+							type: 'text',
+							analyzer: 'standard_lowercase',
+							fields: {
+								keyword: { type: 'keyword' },
+								autocomplete: {
+									type: 'text',
+									analyzer: 'autocomplete_analyzer',
+									search_analyzer: 'standard_lowercase'
+								}
+							}
+						},
 						slug: { type: 'keyword' },
-						description: { type: 'text', analyzer: 'standard' },
+						description: { type: 'text', analyzer: 'standard_lowercase' },
 
 						categoryId: { type: 'keyword' },
 						categoryName: { type: 'text', fields: { keyword: { type: 'keyword' } } },
@@ -79,28 +113,6 @@ export class ProductIndexService implements OnModuleInit {
 			id: productDoc.id,
 			document: productDoc
 		});
-	}
-
-	async searchProducts(searchTerm: string): Promise<EsProductDocument[]> {
-		const result = await this.elasticsearchService.search<EsProductDocument>({
-			index: PRODUCT_INDEX_NAME,
-			query: {
-				multi_match: {
-					query: searchTerm,
-					fields: ['title^3', 'description', 'variants.sku']
-				}
-			}
-		});
-
-		const products: EsProductDocument[] = [];
-
-		for (const hit of result.hits.hits) {
-			if (hit._source !== undefined) {
-				products.push(hit._source);
-			}
-		}
-
-		return products;
 	}
 
 	async deleteProduct(id: string): Promise<void> {

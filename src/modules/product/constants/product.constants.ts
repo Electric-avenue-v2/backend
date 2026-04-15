@@ -1,6 +1,6 @@
 import type { Prisma } from '@prisma/client';
 
-export const PRODUCT_INDEX_NAME = 'products';
+export const PRODUCT_INDEX_NAME = 'products_v2';
 
 export const PRODUCT_FULL_INCLUDE = {
 	variants: {

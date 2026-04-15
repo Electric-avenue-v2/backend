@@ -30,8 +30,9 @@ export class SearchService {
 			query: {
 				bool: {
 					should: [
-						{ match_phrase_prefix: { title: { query: input.query, boost: 3 } } },
-						{ match: { title: { query: input.query, fuzziness: 'AUTO', boost: 1 } } }
+						{ match_phrase: { title: { query: input.query, boost: 10 } } },
+						{ match: { 'title.autocomplete': { query: input.query, operator: 'and', boost: 5 } } },
+						{ match: { title: { query: input.query, fuzziness: 'AUTO', operator: 'and', boost: 2 } } }
 					],
 					filter: [{ term: { inStock: true } }],
 					minimum_should_match: 1

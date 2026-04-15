@@ -44,14 +44,44 @@ export class SearchQueryBuilder {
 	private buildTextQuery(query: string | undefined): QueryDslQueryContainer[] {
 		if (!query) return [{ match_all: {} }];
 
+		const textQuery: QueryDslQueryContainer = {
+			bool: {
+				should: [
+					{ match_phrase: { title: { query, boost: 10 } } },
+					{
+						multi_match: {
+							query,
+							fields: ['title.autocomplete^5', 'description^2'],
+							type: 'cross_fields',
+							operator: 'and',
+							boost: 5
+						}
+					},
+					{
+						multi_match: {
+							query,
+							fields: ['title^3', 'description'],
+							fuzziness: 'AUTO',
+							operator: 'and',
+							boost: 2
+						}
+					}
+				],
+				minimum_should_match: 1
+			}
+		};
+
 		return [
 			{
-				bool: {
-					should: [
-						{ match_phrase_prefix: { title: { query, boost: 3 } } },
-						{ multi_match: { query, fields: ['title^3', 'description'], fuzziness: 'AUTO' } }
+				function_score: {
+					query: textQuery,
+					functions: [
+						{
+							filter: { term: { inStock: true } },
+							weight: 2
+						}
 					],
-					minimum_should_match: 1
+					boost_mode: 'multiply'
 				}
 			}
 		];
