@@ -8,21 +8,17 @@ export class SearchFiltersBuilder {
 		return [...this.buildBaseFilters(input), ...this.buildAllAttributeFilters(input)];
 	}
 
-	buildExcluding(input: SearchProductsInput, excludeSlug: string): QueryDslQueryContainer[] {
-		return [
-			...this.buildBaseFilters(input),
-			...(input.attributes ?? [])
-				.filter(attr => attr.slug !== excludeSlug)
-				.flatMap(attr => this.buildAttributeFilter(attr))
-		];
-	}
-
-	buildBase(input: SearchProductsInput): QueryDslQueryContainer[] {
-		return this.buildBaseFilters(input);
-	}
-
 	private buildBaseFilters(input: SearchProductsInput): QueryDslQueryContainer[] {
 		const filters: QueryDslQueryContainer[] = [];
+
+		filters.push({
+			nested: {
+				path: 'variants',
+				query: {
+					exists: { field: 'variants' }
+				}
+			}
+		});
 
 		if (input.inStock === true) {
 			filters.push({ term: { inStock: true } });
@@ -30,10 +26,15 @@ export class SearchFiltersBuilder {
 
 		if (input.minPrice !== undefined || input.maxPrice !== undefined) {
 			filters.push({
-				range: {
-					minPrice: {
-						...(input.minPrice !== undefined && { gte: input.minPrice }),
-						...(input.maxPrice !== undefined && { lte: input.maxPrice })
+				nested: {
+					path: 'variants',
+					query: {
+						range: {
+							'variants.price': {
+								...(input.minPrice !== undefined && { gte: input.minPrice }),
+								...(input.maxPrice !== undefined && { lte: input.maxPrice })
+							}
+						}
 					}
 				}
 			});

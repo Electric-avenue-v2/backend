@@ -13,10 +13,10 @@ interface SearchQueryOptions {
 }
 
 const sortMap: Record<ProductSort, SortCombinations[]> = {
-	[ProductSort.NEWEST]: [{ createdAt: 'desc' }],
-	[ProductSort.PRICE_ASC]: [{ minPrice: 'asc' }],
-	[ProductSort.PRICE_DESC]: [{ minPrice: 'desc' }],
-	[ProductSort.POPULAR]: [{ totalStock: 'desc' }]
+	[ProductSort.NEWEST]: [{ inStock: 'desc' }, { createdAt: 'desc' }],
+	[ProductSort.PRICE_ASC]: [{ inStock: 'desc' }, { minPrice: 'asc' }],
+	[ProductSort.PRICE_DESC]: [{ inStock: 'desc' }, { minPrice: 'desc' }],
+	[ProductSort.POPULAR]: [{ inStock: 'desc' }, { totalStock: 'desc' }]
 };
 
 @Injectable()
