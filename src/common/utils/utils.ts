@@ -3,3 +3,8 @@ export const generateOtp = (): string => Math.floor(100000 + Math.random() * 900
 export function isObject(val: unknown): val is Record<string, unknown> {
 	return typeof val === 'object' && val !== null;
 }
+
+export function toNumericValue(value: string): number | null {
+	const parsed = Number(value);
+	return isNaN(parsed) ? null : parsed;
+}

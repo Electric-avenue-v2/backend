@@ -1,25 +1,36 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	ForbiddenException,
+	Injectable,
+	NotFoundException
+} from '@nestjs/common';
 import slugify from 'slugify';
 import { PrismaService } from '~/infrastructure/prisma';
 import { PRODUCT_FULL_INCLUDE } from './constants/product.constants';
 import { CreateProductInput } from './inputs/create-product.input';
+import { ProductMapper } from './mappers/product.mapper';
+import { ProductDetails, ProductSeo } from './models/product.model';
 import { ProductFull } from './types/product.types';
-import { ProductMapper } from './utils/product.mapper';
 
 @Injectable()
 export class ProductService {
-	constructor(private readonly prisma: PrismaService) {}
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly productMapper: ProductMapper
+	) {}
 
 	async create(sellerId: string, input: CreateProductInput): Promise<ProductFull> {
 		const hasGlobalImages = input.images && input.images.length > 0;
 		const hasVariantImages = input.variants.some(v => v.images?.length > 0);
 
 		if (!hasGlobalImages && !hasVariantImages) {
-			throw new BadRequestException('The product must have at least one image (general or variant).');
+			throw new BadRequestException(
+				'The product must have at least one image (general or variant).'
+			);
 		}
 
 		const slug = this.generateSlug(input.title);
-		const data = ProductMapper.toPrismaCreate(sellerId, slug, input);
+		const data = this.productMapper.toPrismaCreate(sellerId, slug, input);
 
 		return this.prisma.product.create({
 			data,
@@ -27,7 +38,7 @@ export class ProductService {
 		});
 	}
 
-	async getById(id: string): Promise<ProductFull> {
+	async getById(id: string): Promise<ProductDetails> {
 		const product = await this.prisma.product.findUnique({
 			where: { id },
 			include: PRODUCT_FULL_INCLUDE
@@ -35,7 +46,34 @@ export class ProductService {
 
 		if (!product) throw new NotFoundException(`Product with ID "${id}" not found`);
 
-		return product;
+		return this.productMapper.toGraphQLDetails(product);
+	}
+
+	async getSeoById(id: string): Promise<ProductSeo> {
+		const product = await this.prisma.product.findUnique({
+			where: { id },
+			select: {
+				id: true,
+				title: true,
+				description: true,
+				productImages: { take: 1, select: { url: true } },
+				variants: {
+					take: 1,
+					select: { productImages: { take: 1, select: { url: true } } }
+				}
+			}
+		});
+
+		if (!product) throw new NotFoundException('Product not found');
+
+		const thumbnailUrl = this.productMapper.getThumbnailUrl(product);
+
+		return {
+			id: product.id,
+			title: product.title,
+			description: product.description,
+			thumbnailUrl
+		};
 	}
 
 	async delete(id: string, sellerId: string): Promise<ProductFull> {
@@ -45,7 +83,8 @@ export class ProductService {
 		});
 
 		if (!product) throw new NotFoundException(`Product with ID "${id}" not found`);
-		if (product.sellerId !== sellerId) throw new ForbiddenException('You are not allowed to delete this product');
+		if (product.sellerId !== sellerId)
+			throw new ForbiddenException('You are not allowed to delete this product');
 
 		return this.prisma.product.delete({
 			where: { id },

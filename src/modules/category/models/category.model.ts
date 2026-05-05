@@ -1,5 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
+
+
+
 @ObjectType()
 export class Category {
 	@Field(() => ID)
@@ -16,4 +19,13 @@ export class Category {
 
 	@Field(() => String, { nullable: true })
 	parentId: string | null;
+}
+
+@ObjectType()
+export class CategorySitemapInfo {
+	@Field()
+	slug: string;
+
+	@Field(() => Date)
+	lastModified: Date;
 }

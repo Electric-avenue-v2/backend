@@ -1,5 +1,8 @@
 import { Field, Float, ID, Int, InterfaceType, ObjectType } from '@nestjs/graphql';
 
+
+
+
 @ObjectType()
 export class ProductCategory {
 	@Field(() => ID)
@@ -28,33 +31,15 @@ export class ProductSeller {
 }
 
 @ObjectType()
-export class AttributeInfo {
-	@Field(() => ID)
-	id: string;
-
+export class ProductAttribute {
 	@Field()
 	name: string;
 
 	@Field()
 	slug: string;
-}
-
-@ObjectType()
-export class AttributeValue {
-	@Field(() => ID)
-	id: string;
 
 	@Field()
 	value: string;
-
-	@Field(() => AttributeInfo)
-	attribute: AttributeInfo;
-}
-
-@ObjectType()
-export class ProductAttributeValue {
-	@Field(() => AttributeValue)
-	value: AttributeValue;
 }
 
 @ObjectType()
@@ -86,8 +71,8 @@ export class ProductVariant {
 	@Field(() => [ProductImage], { nullable: true })
 	productImages: ProductImage[];
 
-	@Field(() => [ProductAttributeValue], { nullable: true })
-	attributes?: ProductAttributeValue[];
+	@Field(() => [ProductAttribute], { nullable: true })
+	attributes?: ProductAttribute[];
 }
 
 @InterfaceType()
@@ -110,11 +95,14 @@ export class ProductBase {
 	@Field(() => ProductCategory)
 	category: ProductCategory;
 
-	@Field(() => Float, { nullable: true, description: 'Min price of variants' })
+	@Field(() => Float, { description: 'Min price of variants' })
 	minPrice?: number;
 
-	@Field(() => String, { nullable: true, description: 'Main picture' })
-	thumbnail?: string;
+	@Field(() => Float, { description: 'Max price of variants' })
+	maxPrice: number;
+
+	@Field(() => String, { description: 'Main picture' })
+	thumbnailUrl: string;
 }
 
 @ObjectType({ implements: () => [ProductBase] })
@@ -125,12 +113,27 @@ export class ProductDetails extends ProductBase {
 	@Field(() => ProductSeller)
 	seller: ProductSeller;
 
-	@Field(() => [ProductAttributeValue])
-	specs: ProductAttributeValue[];
+	@Field(() => [ProductAttribute], { nullable: true })
+	specs?: ProductAttribute[];
 
 	@Field(() => [ProductVariant])
 	variants: ProductVariant[];
 
 	@Field(() => [ProductImage])
 	productImages: ProductImage[];
+}
+
+@ObjectType()
+export class ProductSeo {
+	@Field(() => ID)
+	id: string;
+
+	@Field()
+	title: string;
+
+	@Field()
+	description: string;
+
+	@Field(() => String)
+	thumbnailUrl?: string;
 }

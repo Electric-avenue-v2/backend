@@ -44,7 +44,7 @@ services:
     ports:
       - '6379:6379'
     volumes:
-      - ./redisdata:/data
+      - ./redisdata:/data:Z
     command: >
       redis-server
       --requirepass ${REDIS_PASSWORD}
@@ -57,12 +57,13 @@ services:
   debezium-server:
     image: quay.io/debezium/server:3.0.0.Final
     container_name: debezium-server
+    user: "0:0"
     restart: always
     environment:
       - DEBEZIUM_SOURCE_DATABASE_PASSWORD=${DB_PASSWORD}
       - DEBEZIUM_SINK_REDIS_PASSWORD=${REDIS_PASSWORD}
     volumes:
-      - ./debezium-conf:/debezium/config
+      - ./debezium-conf:/debezium/config:Z
       - debezium-data:/debezium/data
     depends_on:
       - postgres

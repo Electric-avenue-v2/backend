@@ -1,10 +1,11 @@
-import { Args, Context, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql';
-import { GetCurrentUserId } from '~/common/decorators';
+import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { GetCurrentUserId, Public } from '~/common/decorators';
 import { GraphqlContext } from '~/infrastructure/graphql/types/graphql.types';
 import { ProductListItem } from '~/modules/search';
 import { FavoriteLoader } from './favorite.loader';
 import { FavoriteService } from './favorite.service';
-import { SyncFavoritesInput } from './inputs/favorite.input';
+import { FavoriteProductsInput, GuestFavoriteProductsInput, SyncFavoritesInput } from './inputs/favorite.input';
+import { FavoriteProductsResult } from './models/favorite.models';
 
 @Resolver(() => ProductListItem)
 export class FavoriteResolver {
@@ -33,10 +34,21 @@ export class FavoriteResolver {
 
 	@Mutation(() => Boolean)
 	async syncFavorites(@Args('input') input: SyncFavoritesInput, @GetCurrentUserId() userId: string): Promise<boolean> {
-		if (input.productIds.length === 0) {
-			return true;
-		}
-
+		if (input.productIds.length === 0) return true;
 		return this.favoriteService.syncFavorites(userId, input.productIds);
+	}
+
+	@Query(() => FavoriteProductsResult, { name: 'favoriteProducts' })
+	async getFavoriteProducts(
+		@GetCurrentUserId() userId: string,
+		@Args('input') input: FavoriteProductsInput
+	): Promise<FavoriteProductsResult> {
+		return this.favoriteService.getFavoriteProducts(userId, input);
+	}
+
+	@Public()
+	@Query(() => FavoriteProductsResult, { name: 'guestFavoriteProducts' })
+	async getGuestFavoriteProducts(@Args('input') input: GuestFavoriteProductsInput): Promise<FavoriteProductsResult> {
+		return this.favoriteService.getGuestFavoriteProducts(input);
 	}
 }

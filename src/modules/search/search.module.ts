@@ -18,6 +18,7 @@ import { SearchService } from './search.service';
 		SearchResultMapper,
 		SearchSuggestionMapper,
 		SearchService
-	]
+	],
+	exports: [SearchService]
 })
 export class SearchModule {}

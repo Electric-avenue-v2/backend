@@ -10,6 +10,15 @@ type UserIdResponse {
   userId: String!
 }
 
+type PaginationMeta {
+  currentPage: Int!
+  totalPages: Int!
+  totalItems: Int!
+  itemsPerPage: Int!
+  hasNextPage: Boolean!
+  hasPrevPage: Boolean!
+}
+
 type Tokens {
   accessToken: String!
   refreshToken: String!
@@ -22,6 +31,16 @@ type Category {
   icon: String
   parentId: String
 }
+
+type CategorySitemapInfo {
+  slug: String!
+  lastModified: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type AttributeValueAggregation {
   value: String!
@@ -58,15 +77,6 @@ type ProductListItem {
   isLiked: Boolean
 }
 
-type PaginationMeta {
-  currentPage: Int!
-  totalPages: Int!
-  totalItems: Int!
-  itemsPerPage: Int!
-  hasNextPage: Boolean!
-  hasPrevPage: Boolean!
-}
-
 type SearchResult {
   items: [ProductListItem!]!
   pagination: PaginationMeta!
@@ -79,6 +89,11 @@ type SearchSuggestion {
   slug: String!
   categorySlug: String!
   categoryName: String!
+}
+
+type FavoriteProductsResult {
+  items: [ProductListItem!]!
+  pagination: PaginationMeta!
 }
 
 type ProductCategory {
@@ -94,20 +109,10 @@ type ProductSeller {
   lastName: String!
 }
 
-type AttributeInfo {
-  id: ID!
+type ProductAttribute {
   name: String!
   slug: String!
-}
-
-type AttributeValue {
-  id: ID!
   value: String!
-  attribute: AttributeInfo!
-}
-
-type ProductAttributeValue {
-  value: AttributeValue!
 }
 
 type ProductImage {
@@ -122,7 +127,7 @@ type ProductVariant {
   price: Float!
   stock: Int!
   productImages: [ProductImage!]
-  attributes: [ProductAttributeValue!]
+  attributes: [ProductAttribute!]
 }
 
 type ProductDetails implements ProductBase {
@@ -134,13 +139,16 @@ type ProductDetails implements ProductBase {
   category: ProductCategory!
 
   """Min price of variants"""
-  minPrice: Float
+  minPrice: Float!
+
+  """Max price of variants"""
+  maxPrice: Float!
 
   """Main picture"""
-  thumbnail: String
+  thumbnailUrl: String!
   description: String!
   seller: ProductSeller!
-  specs: [ProductAttributeValue!]!
+  specs: [ProductAttribute!]
   variants: [ProductVariant!]!
   productImages: [ProductImage!]!
 }
@@ -154,16 +162,21 @@ interface ProductBase {
   category: ProductCategory!
 
   """Min price of variants"""
-  minPrice: Float
+  minPrice: Float!
+
+  """Max price of variants"""
+  maxPrice: Float!
 
   """Main picture"""
-  thumbnail: String
+  thumbnailUrl: String!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
+type ProductSeo {
+  id: ID!
+  title: String!
+  description: String!
+  thumbnailUrl: String!
+}
 
 type UserModel {
   id: ID!
@@ -184,11 +197,15 @@ enum UserRole {
 type Query {
   categories: [Category!]!
   categoryBySlug(slug: String!): Category
+  sitemapCategories: [CategorySitemapInfo!]!
   product(id: String!): ProductDetails!
+  productSeo(id: String!): ProductSeo!
   me: UserModel
   searchSuggestions(input: SearchSuggestionsInput!): [SearchSuggestion!]!
   searchProducts(input: SearchProductsInput!): SearchResult!
   categoryProducts(input: CategoryProductsInput!): SearchResult!
+  favoriteProducts(input: FavoriteProductsInput!): FavoriteProductsResult!
+  guestFavoriteProducts(input: GuestFavoriteProductsInput!): FavoriteProductsResult!
 }
 
 input SearchSuggestionsInput {
@@ -228,6 +245,22 @@ input CategoryProductsInput {
   inStock: Boolean
   attributes: [AttributeFilterInput!]
   categorySlug: String!
+}
+
+input FavoriteProductsInput {
+  page: Int! = 1
+  limit: Int! = 24
+}
+
+input GuestFavoriteProductsInput {
+  page: Int! = 1
+  limit: Int! = 24
+  productIds: [GuestFavoriteItemInput!]!
+}
+
+input GuestFavoriteItemInput {
+  productId: String!
+  addedAt: Float!
 }
 
 type Mutation {

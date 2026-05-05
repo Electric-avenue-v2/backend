@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GetCurrentUserId, Public } from '~/common/decorators';
 import { CreateProductInput } from './inputs/create-product.input';
-import { ProductBase, ProductDetails } from './models/product.model';
+import { ProductBase, ProductDetails, ProductSeo } from './models/product.model';
 import { ProductService } from './product.service';
 import { ProductFull } from './types/product.types';
 
@@ -11,7 +11,7 @@ export class ProductResolver {
 
 	@Public()
 	@Query(() => ProductDetails, { name: 'product' })
-	async getProduct(@Args('id') id: string): Promise<ProductFull> {
+	async getProduct(@Args('id') id: string): Promise<ProductDetails> {
 		return this.productService.getById(id);
 	}
 
@@ -24,7 +24,16 @@ export class ProductResolver {
 	}
 
 	@Mutation(() => ProductDetails)
-	async deleteProduct(@Args('id') id: string, @GetCurrentUserId() userId: string): Promise<ProductFull> {
+	async deleteProduct(
+		@Args('id') id: string,
+		@GetCurrentUserId() userId: string
+	): Promise<ProductFull> {
 		return this.productService.delete(id, userId);
+	}
+
+	@Public()
+	@Query(() => ProductSeo, { name: 'productSeo' })
+	async getProductSeo(@Args('id') id: string): Promise<ProductSeo> {
+		return this.productService.getSeoById(id);
 	}
 }

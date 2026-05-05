@@ -9,7 +9,7 @@ import type { SearchProductsInput } from './inputs/search-products.input';
 import type { SearchSuggestionsInput } from './inputs/search-suggestions.input';
 import { listFields, type ListSource, SearchResultMapper } from './mappers/search-result.mapper';
 import { SearchSuggestionMapper, suggestionFields, type SuggestionSource } from './mappers/search-suggestion.mapper';
-import type { SearchResult } from './models/search-result.model';
+import { ProductListItem, SearchResult } from './models/search-result.model';
 import type { SearchSuggestion } from './models/search-suggestion.model';
 
 @Injectable()
@@ -65,5 +65,20 @@ export class SearchService {
 		});
 
 		return this.resultMapper.toSearchResult(response, input);
+	}
+
+	async getProductsByIds(ids: string[]): Promise<ProductListItem[]> {
+		if (ids.length === 0) return [];
+
+		const response = await this.elasticsearchService.search<ListSource>({
+			index: PRODUCT_INDEX_NAME,
+			_source: [...listFields],
+			size: ids.length,
+			query: {
+				terms: { id: ids }
+			}
+		});
+
+		return this.resultMapper.mapItems(response);
 	}
 }

@@ -1,13 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Public, Roles } from '~/common/decorators';
 import { CategoryService } from './category.service';
-import { Category } from './models/category.model';
-
-
-
-
-
-
+import { Category, CategorySitemapInfo } from './models/category.model';
 
 @Resolver(() => Category)
 export class CategoryResolver {
@@ -27,9 +21,13 @@ export class CategoryResolver {
 
 	@Public()
 	@Query(() => Category, { name: 'categoryBySlug', nullable: true })
-	async getBySlug(
-		@Args('slug') slug: string
-	): Promise<Category | null> {
+	async getBySlug(@Args('slug') slug: string): Promise<Category | null> {
 		return this.categoryService.getBySlug(slug);
+	}
+
+	@Public()
+	@Query(() => [CategorySitemapInfo], { name: 'sitemapCategories' })
+	async getSitemapInfo(): Promise<CategorySitemapInfo[]> {
+		return this.categoryService.getSitemapInfo();
 	}
 }

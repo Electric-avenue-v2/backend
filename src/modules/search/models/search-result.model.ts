@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { PaginationMeta } from '~/common/models';
 import { SearchAggregations } from './attribute-aggregation.model';
 
 @ObjectType()
@@ -35,27 +36,6 @@ export class ProductListItem {
 
 	@Field(() => Boolean, { nullable: true })
 	isLiked?: boolean;
-}
-
-@ObjectType()
-export class PaginationMeta {
-	@Field(() => Int)
-	currentPage: number;
-
-	@Field(() => Int)
-	totalPages: number;
-
-	@Field(() => Int)
-	totalItems: number;
-
-	@Field(() => Int)
-	itemsPerPage: number;
-
-	@Field()
-	hasNextPage: boolean;
-
-	@Field()
-	hasPrevPage: boolean;
 }
 
 @ObjectType()

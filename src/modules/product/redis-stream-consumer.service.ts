@@ -1,13 +1,13 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
-import { isObject } from '~/common/utils/utils';
+import { isObject } from '~/common/utils';
 import { PrismaService } from '~/infrastructure/prisma';
 import { PRODUCT_FULL_INCLUDE } from './constants/product.constants';
 import { ALL_STREAM_KEYS, STREAM_RESOLVERS } from './constants/redis-consumer.constants';
 import { ProductIndexService } from './product-index.service';
 import { StreamResult } from './types/redis-consumer.types';
-import { ProductMapper } from './utils/product.mapper';
+import { ProductMapper } from './mappers/product.mapper';
 import { isDebeziumPayload, isStreamResults } from './utils/redis-consumer.utils';
 
 @Injectable()
@@ -22,7 +22,8 @@ export class RedisStreamConsumerService implements OnModuleInit, OnModuleDestroy
 	constructor(
 		private readonly configService: ConfigService,
 		private readonly productSearchService: ProductIndexService,
-		private readonly prisma: PrismaService
+		private readonly prisma: PrismaService,
+		private readonly productMapper: ProductMapper,
 	) {
 		this.client = new Redis({
 			host: this.configService.getOrThrow<string>('REDIS_HOST'),
@@ -112,7 +113,11 @@ export class RedisStreamConsumerService implements OnModuleInit, OnModuleDestroy
 		}
 	}
 
-	private async handleMessage(streamKey: string, messageId: string, fields: string[]): Promise<void> {
+	private async handleMessage(
+		streamKey: string,
+		messageId: string,
+		fields: string[]
+	): Promise<void> {
 		try {
 			if (fields.length < 2) {
 				await this.ack(streamKey, messageId);
@@ -166,7 +171,10 @@ export class RedisStreamConsumerService implements OnModuleInit, OnModuleDestroy
 
 			await this.ack(streamKey, messageId);
 		} catch (err: unknown) {
-			this.logger.error(`Failed to process message ${messageId} from ${streamKey}, will retry`, err);
+			this.logger.error(
+				`Failed to process message ${messageId} from ${streamKey}, will retry`,
+				err
+			);
 		}
 	}
 
@@ -181,7 +189,7 @@ export class RedisStreamConsumerService implements OnModuleInit, OnModuleDestroy
 			return;
 		}
 
-		const doc = ProductMapper.toEsDocument(product);
+		const doc = this.productMapper.toEsDocument(product);
 		await this.productSearchService.indexProduct(doc);
 		this.logger.log(`Reindexed product ${productId} (op: ${op})`);
 	}

@@ -2,7 +2,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { PrismaService } from '~/infrastructure/prisma';
-import { Category } from './models/category.model';
+import type { Category, CategorySitemapInfo } from './models/category.model';
 
 const CATEGORIES_CACHE_KEY = 'categories:tree';
 
@@ -31,6 +31,34 @@ export class CategoryService {
 	async getBySlug(slug: string): Promise<Category | null> {
 		return this.prisma.category.findUnique({
 			where: { slug }
+		});
+	}
+
+	async getSitemapInfo(): Promise<CategorySitemapInfo[]> {
+		const categories = await this.prisma.category.findMany({
+			select: {
+				slug: true,
+				updatedAt: true,
+				products: {
+					orderBy: { updatedAt: 'desc' },
+					take: 1,
+					select: { updatedAt: true }
+				}
+			}
+		});
+
+		return categories.map(category => {
+			const latestProductDate = category.products[0]?.updatedAt;
+
+			const lastModified =
+				latestProductDate && latestProductDate > category.updatedAt
+					? latestProductDate
+					: category.updatedAt;
+
+			return {
+				slug: category.slug,
+				lastModified
+			};
 		});
 	}
 }

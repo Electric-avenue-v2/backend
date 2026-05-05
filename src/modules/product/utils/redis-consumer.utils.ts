@@ -1,5 +1,5 @@
 import { DebeziumPayload, DebeziumRecord, StreamResult } from '../types/redis-consumer.types';
-import { isObject } from '~/common/utils/utils';
+import { isObject } from '~/common/utils';
 
 export function isDebeziumPayload(val: unknown): val is DebeziumPayload {
 	if (!isObject(val)) return false;

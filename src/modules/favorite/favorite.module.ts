@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
-import { FavoriteLoader } from '~/modules/favorite/favorite.loader';
+import { SearchModule } from '~/modules/search';
+import { FavoriteBuilder } from './builders/favorite.builder';
+import { FavoriteLoader } from './favorite.loader';
 import { FavoriteResolver } from './favorite.resolver';
 import { FavoriteService } from './favorite.service';
 
 @Module({
-	providers: [FavoriteResolver, FavoriteService, FavoriteLoader]
+	imports: [SearchModule],
+	providers: [FavoriteResolver, FavoriteService, FavoriteLoader, FavoriteBuilder]
 })
 export class FavoriteModule {}

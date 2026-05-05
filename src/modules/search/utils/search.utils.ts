@@ -1,4 +1,4 @@
-import { isObject } from '~/common/utils/utils';
+import { isObject } from '~/common/utils';
 import { EsAggregations } from '../types/search-mapper.types';
 
 export function isEsAggregations(val: unknown): val is EsAggregations {

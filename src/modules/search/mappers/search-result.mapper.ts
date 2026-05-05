@@ -55,7 +55,7 @@ export class SearchResultMapper {
 		};
 	}
 
-	private mapItems(response: SearchResponse<ListSource, Record<string, AggregationsAggregate>>): ProductListItem[] {
+	mapItems(response: SearchResponse<ListSource, Record<string, AggregationsAggregate>>): ProductListItem[] {
 		return response.hits.hits
 			.filter((hit): hit is typeof hit & { _source: ListSource } => hit._source !== undefined)
 			.map(hit => hit._source);
